@@ -23,7 +23,7 @@ sphinxnotes-incrbuild
 
 |docs| |license| |pypi| |download|
 
-A sphinx-build wrapper to create an "incremental build"-able environment in CI/CD.
+Make sure incremental build available in CI/CD environment.
 
 .. INTRODUCTION START 
    (MUST written in standard reStructuredText, without Sphinx stuff)

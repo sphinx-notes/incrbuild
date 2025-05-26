@@ -7,7 +7,7 @@
 
 [project]
 name = "sphinxnotes-incrbuild"
-description = "A sphinx-build wrapper to create an "incremental build"-able environment in CI/CD"
+description = "Make sure incremental build available in CI/CD environment"
 readme = "README.rst"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
@@ -60,6 +60,10 @@ repository = "https://github.com/sphinx-notes/incrbuild"
 changelog = "https://sphinx.silverrainz.me/incrbuild/changelog.html"
 tracker = "https://github.com/sphinx-notes/incrbuild/issues"
 
+[project.scripts]
+"sphinx-incrbuild" = "sphinxnotes.incrbuild.__main__:main"
+"sphinxnotes-incrbuild" = "sphinxnotes.incrbuild.__main__:main"
+
 [build-system]
 requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
 build-backend = "setuptools.build_meta"
@@ -73,3 +77,8 @@ version_scheme = "no-guess-dev"
 # Find namespace package,
 # check out https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#finding-namespace-packages
 where = ["src"]
+
+[tool.setuptools.package-data]
+# A maps from PACKAGE NAMES to lists of glob patterns,
+# see also https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+"sphinxnotes.incrbuild.git_tools" = ["git-tools/git-restore-mtime"]
