@@ -78,4 +78,7 @@ bump-version:
 
 # EXTRA TARGETS START
 
+cli:
+	$(PY) -m src.sphinxnotes.incrbuild $O
+
 # EXTRA TARGETS END

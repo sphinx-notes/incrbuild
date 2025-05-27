@@ -19,7 +19,7 @@ from pathlib import Path
 # This isn't public API, but there aren't many better options
 from sphinx.cmd.build import get_parser as sphinx_get_parser
 
-from .sphinx import get_sphinx_build_parser
+from . import sphinxapi
 
 __version__ = '0.1.0'
 
@@ -37,10 +37,11 @@ def main(argv=()):
 def _parse_args(argv):
     # Parse once with the Sphinx parser to emit errors
     # and capture the ``-d`` and ``-w`` options.
-    sphinx_args = get_sphinx_build_parser().parse_args(argv.copy())
+    sphinx_args = sphinxapi.get_build_parser(_inject_parser).parse_args(argv.copy())
 
     # Parse a second time with just our parser
-    parser = _get_parser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    _inject_parser(parser)
     args, build_args = parser.parse_known_args(argv.copy())
 
     # Copy needed settings
@@ -61,13 +62,22 @@ def _parse_args(argv):
     return args, build_args
 
 
-def _get_parser():
-    """Get the application's argument parser."""
-    parser = argparse.ArgumentParser(allow_abbrev=False)
-    parser.add_argument(
-        "--version", action="version", version=f"sphinx-incrbuild {__version__}"
-    )
-    _add_incrbuild_arguments(parser)
+def _inject_parser(parser: argparse.ArgumentParser):
+    parser.description = None
+    parser.epilog = None
+    parser.prog = "sphinx-incrbuild"
+
+    version_hooked = False
+    for action in parser._actions:
+        if hasattr(action, "version"):
+            # Fix the version
+            action.version = f"%(prog)s 0.0.1"
+            version_hooked = True
+            break
+    if not version_hooked:
+        parser.add_argument(
+            "--version", action="version", version=f"sphinx-incrbuild {__version__}"
+        )
 
     group = parser.add_argument_group("incrbuild options")
     group.add_argument(

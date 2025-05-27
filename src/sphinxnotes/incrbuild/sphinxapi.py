@@ -24,24 +24,22 @@ def get_html_theme_dir(conf: str) -> str:
     return theme_dir
 
 
-def get_sphinx_build_parser():
+def get_build_parser(injection):
     # NOTE:
     # sphinx.cmd.build.get_parser is not considered to be public API,
     # but as this is a first-party project, we can cheat a little bit.
-    sphinx_build_parser = sphinx_get_parser()
-    sphinx_build_parser.description = None
-    sphinx_build_parser.epilog = None
-    sphinx_build_parser.prog = "sphinx-incrbuild"
-    # for action in sphinx_build_parser._actions:
-    #     if hasattr(action, "version"):
-    #         # Fix the version
-    #         action.version = f"%(prog)s {__version__}"
-    #         break
-    sphinx_build_parser.add_argument(
+    parser = sphinx_get_parser()
+    for action in parser._actions:
+        if hasattr(action, "version"):
+            # Fix the version
+            action.version = f"%(prog)s 0.0.1"
+            break
+    parser.add_argument(
         "-M",
         dest="use_make_mode",
         help=argparse.SUPPRESS,
     )
-    _add_incrbuild_arguments(sphinx_build_parser)
 
-    return sphinx_build_parser
+    injection(parser)
+
+    return parser
