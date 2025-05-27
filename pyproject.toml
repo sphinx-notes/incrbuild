@@ -81,4 +81,4 @@ where = ["src"]
 [tool.setuptools.package-data]
 # A maps from PACKAGE NAMES to lists of glob patterns,
 # see also https://setuptools.pypa.io/en/latest/userguide/datafiles.html
-"sphinxnotes.incrbuild.git_tools" = ["git-tools/git-restore-mtime"]
+"sphinxnotes.incrbuild.gittools" = ["git-tools/git-restore-mtime"]
