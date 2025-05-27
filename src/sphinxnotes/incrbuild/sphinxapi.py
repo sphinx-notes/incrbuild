@@ -12,10 +12,13 @@ from os import path
 import argparse
 import site
 from pathlib import Path
+import argparse
+import subprocess
 
-# There aren't public APIs, but there aren't many better options
-from sphinx.config import Config, eval_config_file
-from sphinx.cmd.build import get_parser as sphinx_get_parser
+import sphinx
+# NOTE: There aren't public APIs, but there aren't many better options
+from sphinx.config import eval_config_file
+from sphinx.cmd.build import get_parser, main
 
 
 def get_html_theme_dir(conf_dir: Path) -> Path:
@@ -26,10 +29,7 @@ def get_html_theme_dir(conf_dir: Path) -> Path:
 
 
 def get_build_parser(injection):
-    # NOTE:
-    # sphinx.cmd.build.get_parser is not considered to be public API,
-    # but as this is a first-party project, we can cheat a little bit.
-    parser = sphinx_get_parser()
+    parser = get_parser()
     for action in parser._actions:
         if hasattr(action, 'version'):
             # Fix the version
@@ -40,7 +40,9 @@ def get_build_parser(injection):
         dest='use_make_mode',
         help=argparse.SUPPRESS,
     )
-
     injection(parser)
-
     return parser
+
+
+def run(args: list[str]):
+    main(args)

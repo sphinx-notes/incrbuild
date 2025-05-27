@@ -42,6 +42,8 @@ def main(argv=()):
     print(f'git_dir: {git_dir}')
     restore_git_files_mtime(git_dir)
 
+    sphinxapi.run(build_args)
+
 
 def _parse_args(argv):
     # Parse once with the Sphinx parser to emit errors
@@ -60,7 +62,6 @@ def _parse_args(argv):
     args.doctreedir = (
         Path(sphinx_args.doctreedir).resolve() if sphinx_args.doctreedir else None
     )
-
     args.builder = sphinx_args.builder or sphinx_args.use_make_mode or ''
     args.make_mode = sphinx_args.use_make_mode is not None
 
@@ -146,6 +147,7 @@ def restore_git_files_mtime(git_dir: Path):
     except subprocess.CalledProcessError as e:
         print(f'{cmd} exited with exit code: {e.returncode}')
         raise
+
 
 
 if __name__ == '__main__':
