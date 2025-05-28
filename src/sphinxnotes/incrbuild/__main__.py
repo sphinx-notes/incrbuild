@@ -20,8 +20,13 @@ from pathlib import Path
 import subprocess
 from importlib import metadata 
 
+from colorama import Fore, Style
+
 from . import sphinxapi
 
+__PROG__ = 'sphinxnotes-incrbuild'
+# __VERSION__ = metadata.version('sphinxnotes.incrbuild')
+__VERSION__ = '0.1.0'
 
 def main(argv=()):
     """Actual application logic."""
@@ -31,17 +36,20 @@ def main(argv=()):
         argv = sys.argv[1:]
     args, build_args = _parse_args(list(argv))
 
-    print(f'args: {args}')
-    print(f'build_args: {build_args}')
+    info(f'Running {__PROG__} {__VERSION__}')
 
-    theme_dir = sphinxapi.get_html_theme_dir(args.confdir or args.srcdir)
-    print(f'theme_dir: {theme_dir}')
-    # restore_theme_files_mtime(theme_dir)
+    if args.builder in ['html']:
+        theme, theme_dir = sphinxapi.get_html_theme_dir(args.confdir or args.srcdir)
+        info(f'Current theme: {theme}, path: {theme_dir}')
+        restore_theme_files_mtime(theme_dir)
 
-    git_dir = reslove_git_dir(args.srcdir)
-    print(f'git_dir: {git_dir}')
-    restore_git_files_mtime(git_dir)
+        git_dir = reslove_git_dir(args.srcdir)
+        info(f'Git root: {git_dir}')
+        restore_git_files_mtime(git_dir)
+    else:
+        info(f'Only HTML builder is supported, nothing todo')
 
+    info(f'Running sphinx-build {' '.join(build_args)}...')
     sphinxapi.run(build_args)
 
 
@@ -71,27 +79,26 @@ def _parse_args(argv):
 def _inject_parser(parser: argparse.ArgumentParser):
     parser.description = None
     parser.epilog = None
-    parser.prog = 'sphinx-incrbuild'
+    parser.prog = __PROG__
 
-    version = metadata.version('sphinxnotes.incrbuild')
-    version = '0.0.1'
     version_hooked = False
     for action in parser._actions:
         if hasattr(action, 'version'):
             # Fix the version
-            action.version = f'%(prog)s {version}'
+            action.version = f'%(prog)s {__VERSION__}'
             version_hooked = True
             break
     if not version_hooked:
         parser.add_argument(
-            '--version', action='version', version=f'sphinx-incrbuild {version}'
+            '--version', action='version', version=f'%(prog)s {__VERSION__}'
         )
 
     group = parser.add_argument_group('incrbuild options')
     group.add_argument(
-        '--build-cache',
-        action='store_true',
-        help='print path of data that needs to be cached by CI/CD',
+        '--cache',
+        type=str,
+        default=f'/tmp/{__PROG__}',
+        help='path to directory that will be cached by CI/CD',
     )
 
     return parser
@@ -108,7 +115,6 @@ def restore_theme_files_mtime(theme_dir: Path):
     
     .. [1] https://github.com/sphinx-doc/sphinx/blob/847ad0c991e21db9daa02fec09acbd456f353300/sphinx/builders/html/__init__.py#L371
     """
-
     new_mtime = 190001010000 # TODO: read template release time
     theme_html_files = list(
         Path(root, sfile)
@@ -118,10 +124,13 @@ def restore_theme_files_mtime(theme_dir: Path):
     )
     for html_file in theme_html_files:
         old_mtime = html_file.stat().st_mtime
-        print(f'Fixing mtime of {html_file.name}: {old_mtime} -> {new_mtime}')
+        info(f'Restoring mtime of {html_file.name}: {old_mtime} -> {new_mtime}') # TODO: debug?
         atime = time.time()
-        os.utime(html_file, (atime, new_mtime), follow_symlinks=True)
-
+        try:
+            os.utime(html_file, (atime, new_mtime), follow_symlinks=True)
+        except PermissionError as e:
+            error(f'Failed to set mtime of file {html_file.name}: {e}')
+        sys.exit(-1)
 
 
 def reslove_git_dir(cwd: Path) -> Path:
@@ -142,12 +151,22 @@ def restore_git_files_mtime(git_dir: Path):
     git_restore_mtime = prefix.joinpath('gittools', 'git-restore-mtime')
 
     cmd = [git_restore_mtime]
-    try:
-        subprocess.run(cmd, check=True, cwd=git_dir)
-    except subprocess.CalledProcessError as e:
-        print(f'{cmd} exited with exit code: {e.returncode}')
-        raise
+    p = subprocess.Popen(cmd, stderr=subprocess.PIPE, cwd=git_dir)
+    for line in p.stderr or []:
+        line = line.decode('utf-8').strip()
+        info(f'{Fore.BLUE}[git-restore-mtime]{Style.RESET_ALL} {line}')
+    p.wait()
+    if p.returncode != 0:
+        error(f'{cmd} exited with exit code: {p.returncode}')
+        sys.exit(p.returncode)
 
+
+def info(text):
+    print(f"{Fore.GREEN}[{__PROG__}]{Style.RESET_ALL} {text}")
+
+
+def error(text):
+    print(f"{Fore.RED}[{__PROG__}]{Style.RESET_ALL} {text}")
 
 
 if __name__ == '__main__':

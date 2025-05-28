@@ -21,11 +21,11 @@ from sphinx.config import eval_config_file
 from sphinx.cmd.build import get_parser, main
 
 
-def get_html_theme_dir(conf_dir: Path) -> Path:
+def get_html_theme_dir(conf_dir: Path) -> (str, Path):
     cfg = eval_config_file(conf_dir.joinpath('conf.py'), None)
     theme = cfg.get('html_theme', 'alabaster')
     theme_dir = path.join(*site.getsitepackages(), theme)
-    return Path(theme_dir).resolve()
+    return (theme, Path(theme_dir).resolve())
 
 
 def get_build_parser(injection):
