@@ -36,5 +36,5 @@ def get_build_parser(injection):
     return parser
 
 
-def run(args: list[str]):
-    main(args)
+def run(args: list[str]) -> int:
+    return main(args)
