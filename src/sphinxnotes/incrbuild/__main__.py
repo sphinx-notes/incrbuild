@@ -19,8 +19,11 @@ import time
 from pathlib import Path
 import subprocess
 from importlib import metadata 
+import site
+from datetime import datetime
 
 from colorama import Fore, Style
+from pypi_simple import PyPISimple
 
 from . import sphinxapi
 
@@ -36,12 +39,12 @@ def main(argv=()):
         argv = sys.argv[1:]
     args, build_args = _parse_args(list(argv))
 
-    info(f'Running {__PROG__} {__VERSION__}')
+    info(f'Running {__PROG__} {__VERSION__}, cache will be stored in {args.cache}')
 
     if args.builder in ['html']:
-        theme, theme_dir = sphinxapi.get_html_theme_dir(args.confdir or args.srcdir)
-        info(f'Current theme: {theme}, path: {theme_dir}')
-        restore_theme_files_mtime(theme_dir)
+        theme = sphinxapi.get_html_theme(args.confdir or args.srcdir)
+        info(f'Current theme: {theme}')
+        restore_theme_files_mtime(theme)
 
         git_dir = reslove_git_dir(args.srcdir)
         info(f'Git root: {git_dir}')
@@ -104,7 +107,27 @@ def _inject_parser(parser: argparse.ArgumentParser):
     return parser
 
 
-def restore_theme_files_mtime(theme_dir: Path):
+def get_pypi_package_release_time(name: str, version: str) -> datetime | None:
+    # TODO: cache project page
+    with PyPISimple() as client:
+        try:
+            page = client.get_project_page(name)
+        except Exception as e:
+            error(f'Failed to get project page of {name}: {e}')
+            return None
+
+        pkg = next(p for p in page.packages if p.version == version)
+        if pkg is None:
+            error(f'Failed to get {name}=={version}: not found')
+            return None
+        __import__('pprint').pprint(pkg)
+        if pkg.upload_time is None:
+            error(f'Failed to get upload time {name}=={version}: None')
+            return None
+        return pkg.upload_time
+
+
+def restore_theme_files_mtime(theme: str):
     """
     Sphinx HTML builder will rebuild the whole project when **modification time
     (mtime) of templates of theme** newer than built result [1]_.
@@ -115,7 +138,12 @@ def restore_theme_files_mtime(theme_dir: Path):
     
     .. [1] https://github.com/sphinx-doc/sphinx/blob/847ad0c991e21db9daa02fec09acbd456f353300/sphinx/builders/html/__init__.py#L371
     """
-    new_mtime = 190001010000 # TODO: read template release time
+    theme_dir = Path(*site.getsitepackages()).resolve().joinpath(theme)
+    theme_version = metadata.version(theme)
+    theme_mtime = get_pypi_package_release_time(theme, theme_version)
+    if theme_mtime is None:
+        theme_mtime = datetime.fromtimestamp(190001010000)
+    info(f'Release time of {theme}=={theme_version}: {theme_mtime}')
     theme_html_files = list(
         Path(root, sfile)
         for root, _dirs, files in os.walk(theme_dir)
@@ -124,10 +152,9 @@ def restore_theme_files_mtime(theme_dir: Path):
     )
     for html_file in theme_html_files:
         old_mtime = html_file.stat().st_mtime
-        info(f'Restoring mtime of {html_file.name}: {old_mtime} -> {new_mtime}') # TODO: debug?
-        atime = time.time()
+        info(f'Restoring mtime of {html_file.name}: {datetime.fromtimestamp(old_mtime)} -> {theme_mtime}') # TODO: debug?
         try:
-            os.utime(html_file, (atime, new_mtime), follow_symlinks=True)
+            os.utime(html_file, (time.time(), theme_mtime.timestamp()), follow_symlinks=True)
         except PermissionError as e:
             error(f'Failed to set mtime of file {html_file.name}: {e}')
         sys.exit(-1)
