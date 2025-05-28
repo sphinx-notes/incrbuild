@@ -1,3 +1,3 @@
 [submodule "git-tools"]
-	path = src/sphinxnotes/incrbuild/gittools
+	path = src/sphinxnotes/incrbuild/git-tools
 	url = https://github.com/MestreLion/git-tools.git

@@ -166,7 +166,7 @@ def restore_git_files_mtime(git_dir: Path):
     # See ``[tool.setuptools.package-data]`` section of pyproject.toml to know
     # how gittools are included.
     prefix = Path(__file__).parent.resolve()
-    git_restore_mtime = prefix.joinpath('gittools', 'git-restore-mtime')
+    git_restore_mtime = prefix.joinpath('git-tools', 'git-restore-mtime')
 
     cmd = [git_restore_mtime]
     p = subprocess.Popen(cmd, stderr=subprocess.PIPE, cwd=git_dir)
