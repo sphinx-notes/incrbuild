@@ -41,7 +41,7 @@ def main(argv=()) -> int:
     info(f'Running sphinx-incrbuild {__VERSION__}, cache directory: {args.cache}')
 
     if args.builder not in ['html']:
-        warn(f'Only HTML builder is supported, passthrough')
+        warn('Only HTML builder is supported, passthrough')
         info(f'Running sphinx-build {" ".join(build_args)}...')
         return sphinxapi.run(build_args)
 
@@ -117,7 +117,7 @@ def _inject_parser(parser: argparse.ArgumentParser):
     group.add_argument(
         '--cache',
         type=str,
-        default=f'/tmp/sphinx-incrbuild',
+        default='/tmp/sphinx-incrbuild',
         help='path to directory that will be cached by CI/CD',
     )
 

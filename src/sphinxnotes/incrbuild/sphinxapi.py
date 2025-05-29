@@ -8,12 +8,9 @@ Sphinx-related code.
 :license: BSD, see LICENSE for details.
 """
 
-from os import path
 import argparse
 from pathlib import Path
-import argparse
 
-import sphinx
 
 # NOTE: There aren't public APIs, but there aren't many better options
 from sphinx.config import eval_config_file
