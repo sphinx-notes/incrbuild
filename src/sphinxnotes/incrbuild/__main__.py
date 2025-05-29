@@ -18,7 +18,6 @@ import time
 from pathlib import Path
 import subprocess
 from importlib import metadata
-import site
 from datetime import datetime
 import shutil
 
@@ -136,25 +135,34 @@ def restore_theme_files_mtime(theme: str):
     .. [1] https://github.com/sphinx-doc/sphinx/blob/847ad0c991e21db9daa02fec09acbd456f353300/sphinx/builders/html/__init__.py#L371
     """
     info(f'Current theme: {theme}')
-    theme_dir = Path(*site.getsitepackages()).resolve().joinpath(theme)
-    # theme_version = metadata.version(theme)
-    # Use a hardcoded date for now. TODO: use get_pypi_package_release_time
-    theme_mtime = datetime(1900, 1, 1)
 
-    theme_html_files = list(
-        Path(root, sfile)
-        for root, _dirs, files in os.walk(theme_dir)
-        for sfile in files
-        if sfile.endswith('.html')
-    )
-    for html_file in theme_html_files:
+    HTML_FILE_MTIME = datetime(1900, 1, 1)
+
+    # Find all HTML files of theme and its dependencies.
+    # For example: sphinx_book_theme depends on pydata-sphinx-theme.
+    deps = [theme]
+    for dep in metadata.requires(theme) or []:
+        if 'extra ==' in dep:
+            continue # skip optional dependencies
+        delim = next(delim for delim in ['>',  '<', '='] if delim in dep)
+        if delim is not None:
+            dep = dep.split(delim)[0].strip()
+        deps.append(dep)
+    html_files = []
+    for dep in deps:
+        for file in metadata.files(dep) or []:
+            if file.suffix != '.html':
+                continue
+            html_files.append(file.locate())
+
+    for html_file in html_files:
         old_mtime = html_file.stat().st_mtime
         info(
-            f'Restoring mtime of {html_file.name}: {datetime.fromtimestamp(old_mtime)} -> {theme_mtime}'
+            f'Restoring mtime of {html_file.name}: {datetime.fromtimestamp(old_mtime)} -> {HTML_FILE_MTIME}'
         )  # TODO: debug?
         try:
             os.utime(
-                html_file, (time.time(), theme_mtime.timestamp()), follow_symlinks=True
+                html_file, (time.time(), HTML_FILE_MTIME.timestamp()), follow_symlinks=True
             )
         except PermissionError as e:
             error(f'Failed to set mtime of file {html_file.name}: {e}')
