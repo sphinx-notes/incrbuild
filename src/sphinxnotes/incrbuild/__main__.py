@@ -6,6 +6,7 @@ sphinxnotes-incrbuild CLI entry entrypoint.
 
 :copyright: Copyright 2025 Shengyu Zhang
 :license: BSD, see LICENSE for details.
+
 """
 
 from __future__ import annotations
@@ -55,7 +56,7 @@ def main(argv=()) -> int:
     restore_cache(cache_dir, html_dir, doctrees_dir)
 
     theme = sphinxapi.get_html_theme(args.confdir or args.srcdir)
-    # restore_theme_files_mtime(theme)
+    restore_theme_files_mtime(theme)
 
     git_dir = reslove_git_dir(args.srcdir)
     restore_git_files_mtime(git_dir)
@@ -157,7 +158,7 @@ def restore_theme_files_mtime(theme: str):
             )
         except PermissionError as e:
             error(f'Failed to set mtime of file {html_file.name}: {e}')
-        sys.exit(-1)
+            sys.exit(-1)
 
 
 def restore_git_files_mtime(git_dir: Path):
