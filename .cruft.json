@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/sphinx-notes/cookiecutter",
-  "commit": "b8cc7d1072c169001ab070cf464ad19d7cb62e65",
+  "commit": "b2800879b80f9a5f2acaae0f50d640fb737d723f",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -14,8 +14,13 @@
       "github_repo": "incrbuild",
       "pypi_name": "sphinxnotes-incrbuild",
       "pypi_owner": "SilverRainZ",
+      "is_python_project": true,
+      "python_version": "3.12",
+      "is_sphinx_extension": false,
+      "sphinx_version": "7.0",
+      "development_status": "3 - Alpha",
       "_template": "https://github.com/sphinx-notes/cookiecutter",
-      "_commit": "b8cc7d1072c169001ab070cf464ad19d7cb62e65"
+      "_commit": "b2800879b80f9a5f2acaae0f50d640fb737d723f"
     }
   },
   "directory": null
