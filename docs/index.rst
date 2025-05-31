@@ -8,19 +8,15 @@ sphinxnotes-incrbuild
 .. |docs| image:: https://img.shields.io/github/deployments/sphinx-notes/incrbuild/github-pages?label=docs
    :target: https://sphinx.silverrainz.me/incrbuild
    :alt: Documentation Status
-
 .. |license| image:: https://img.shields.io/github/license/sphinx-notes/incrbuild
    :target: https://github.com/sphinx-notes/incrbuild/blob/master/LICENSE
    :alt: Open Source License
-
 .. |pypi| image:: https://img.shields.io/pypi/v/sphinxnotes-incrbuild.svg
    :target: https://pypi.python.org/pypi/sphinxnotes-incrbuild
    :alt: PyPI Package
-
 .. |download| image:: https://img.shields.io/pypi/dm/sphinxnotes-incrbuild
    :target: https://pypi.python.org/pypi/sphinxnotes-incrbuild
    :alt: PyPI Package Downloads
-
 .. |github| image:: https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white/
    :target: https://github.com/sphinx-notes/incrbuild
    :alt: GitHub Repository
@@ -32,6 +28,15 @@ Introduction
 
 .. INTRODUCTION START
 
+As we know, Sphinx supports incremental HTML build, and it works well locally.
+But for CI/CD, the environment is usually brand new, which causes Sphinx
+always to rebuild everything.
+
+The project wraps :parsed_literal:`sphinx-build_` and ensures the environment
+is "incremental build" -able before running the real ``sphinx-build``.
+
+.. _sphinx-build: https://www.sphinx-doc.org/en/master/man/sphinx-build.html
+
 .. INTRODUCTION END
 
 Getting Started
@@ -39,8 +44,7 @@ Getting Started
 
 .. note::
 
-   We assume you already have a Sphinx documentation,
-   if not, see `Getting Started with Sphinx`_.
+   For most users, please go directly to `GitHub Actions`_ and `GitLab CI`_.
 
 First, downloading extension from PyPI:
 
@@ -48,23 +52,47 @@ First, downloading extension from PyPI:
 
    $ pip install sphinxnotes-incrbuild
 
-Then, add the extension name to ``extensions`` configuration item in your
-:parsed_literal:`conf.py_`:
-
-.. code-block:: python
-
-   extensions = [
-             # …
-             'sphinxnotes.incrbuild',
-             # …
-             ]
-
-.. _Getting Started with Sphinx: https://www.sphinx-doc.org/en/master/usage/quickstart.html
-.. _conf.py: https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 .. ADDITIONAL CONTENT START
 
-.. ADDITIONAL CONTENT END
+After installation, command ``sphin-incrbuild`` should be available.
+Use need to replace their ``sphinx-build`` command to ``sphin-incrbuild``.
+
+All arguments of ``sphin-incrbuild`` are same to :parsed_literal:`sphinx-build_`
+except:
+
+:``--cache CACHE``: path to directory that will be cached by CI/CD
+
+Use should use CI/CD's Cache mechanism, restore cache file to cache directory
+pass the directory to ``sphin-incrbuild`` via ``--cache``, and upload the cache
+after build finished, in pseudocode:
+
+.. code-block:: yaml
+
+   - run: restore /tmp/cache
+   - run: sphinx-incrbuild --cache /tmp/cache <other Sphinx options...>
+   - run: upload /tmp/cache
+
+GitHub Actions
+--------------
+
+``sphinxnotes-incrbuild`` is already integrated into action `sphinx-notes/pages@v3`__,
+just set ``cache: true`` to enable incremental build.
+
+.. code-block:: yaml
+   :emphasize-lines: 4
+
+   - id: deployment
+     uses: sphinx-notes/pages@v3
+     with:
+       cache: true
+
+__ https://github.com/marketplace/actions/sphinx-to-github-pages
+
+GitLab CI
+---------
+
+TODO
 
 Contents
 ========
