@@ -8,6 +8,7 @@ Utils functions.
 :license: BSD, see LICENSE for details.
 """
 
+import sys
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -18,15 +19,15 @@ from pypi_simple import PyPISimple
 
 
 def info(text, context='sphinx-incrbuild'):
-    print(f'{Fore.GREEN}[{context}]{Style.RESET_ALL} {text}')
+    print(f'{Fore.GREEN}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 
 def warn(text, context='sphinx-incrbuild'):
-    print(f'{Fore.YELLOW}[{context}]{Style.RESET_ALL} {text}')
+    print(f'{Fore.YELLOW}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 
 def error(text, context='sphinx-incrbuild'):
-    print(f'{Fore.RED}[{context}]{Style.RESET_ALL} {text}')
+    print(f'{Fore.RED}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 
 def get_pypi_package_release_time(name: str, version: str) -> datetime | None:
