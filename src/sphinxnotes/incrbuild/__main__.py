@@ -143,9 +143,9 @@ def restore_theme_files_mtime(theme: str):
     deps = [theme]
     for dep in metadata.requires(theme) or []:
         if 'extra ==' in dep:
-            continue # skip optional dependencies
-        delim = next(delim for delim in ['>',  '<', '='] if delim in dep)
-        if delim is not None:
+            continue  # skip optional dependencies
+        delim = next(delim for delim in ['>', '<', '=', ''] if delim in dep)
+        if delim != '':
             dep = dep.split(delim)[0].strip()
         deps.append(dep)
     html_files = []
@@ -162,7 +162,9 @@ def restore_theme_files_mtime(theme: str):
         )  # TODO: debug?
         try:
             os.utime(
-                html_file, (time.time(), HTML_FILE_MTIME.timestamp()), follow_symlinks=True
+                html_file,
+                (time.time(), HTML_FILE_MTIME.timestamp()),
+                follow_symlinks=True,
             )
         except PermissionError as e:
             error(f'Failed to set mtime of file {html_file.name}: {e}')
