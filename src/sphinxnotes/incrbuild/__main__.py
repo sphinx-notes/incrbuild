@@ -144,8 +144,8 @@ def restore_theme_files_mtime(theme: str):
     for dep in metadata.requires(theme) or []:
         if 'extra ==' in dep:
             continue # skip optional dependencies
-        delim = next(delim for delim in ['>',  '<', '='] if delim in dep)
-        if delim is not None:
+        delim = next(delim for delim in ['>',  '<', '=', ''] if delim in dep)
+        if delim is not '':
             dep = dep.split(delim)[0].strip()
         deps.append(dep)
     html_files = []
