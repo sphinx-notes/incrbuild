@@ -84,7 +84,6 @@ changelog = "https://sphinx.silverrainz.me/incrbuild/changelog.html"
 tracker = "https://github.com/sphinx-notes/incrbuild/issues"
 
 [project.scripts]
-"sphinx-incrbuild" = "sphinxnotes.incrbuild.__main__:main"
 "sphinxnotes-incrbuild" = "sphinxnotes.incrbuild.__main__:main"
 
 [build-system]
