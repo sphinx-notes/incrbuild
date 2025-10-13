@@ -116,7 +116,7 @@ def _inject_parser(parser: argparse.ArgumentParser):
     group.add_argument(
         '--cache',
         type=str,
-        default='/tmp/sphinxnotes-incrbuild',
+        default='/tmp/sphinx-incrbuild',
         help='path to directory that will be cached by CI/CD',
     )
 
