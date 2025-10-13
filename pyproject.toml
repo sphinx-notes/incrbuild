@@ -42,6 +42,7 @@ dependencies = [
     # CUSTOM DEPENDENCIES START
     "colorama",
     "pypi_simple",
+    "packaging"
     # CUSTOM DEPENDENCIES END
 ]
 

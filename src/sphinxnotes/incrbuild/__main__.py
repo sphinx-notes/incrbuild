@@ -20,6 +20,7 @@ import subprocess
 from importlib import metadata
 from datetime import datetime
 import shutil
+from packaging.requirements import Requirement
 
 from . import sphinxapi
 from .utils import info, warn, error, reslove_git_dir, copy, move
@@ -142,12 +143,9 @@ def restore_theme_files_mtime(theme: str):
     # For example: sphinx_book_theme depends on pydata-sphinx-theme.
     deps = [theme]
     for dep in metadata.requires(theme) or []:
-        if 'extra ==' in dep:
+        req = Requirement(dep)
+        if req.marker is not None:
             continue  # skip optional dependencies
-        delim = next(delim for delim in ['>', '<', '=', ''] if delim in dep)
-        if delim != '':
-            dep = dep.split(delim)[0].strip()
-        deps.append(dep)
     html_files = []
     for dep in deps:
         for file in metadata.files(dep) or []:
