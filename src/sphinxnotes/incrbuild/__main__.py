@@ -22,14 +22,8 @@ from datetime import datetime
 import shutil
 from packaging.requirements import Requirement
 
-from . import sphinxapi
+from . import sphinxapi, meta
 from .utils import info, warn, error, reslove_git_dir, copy, move
-
-
-try:
-    __VERSION__ = metadata.version('sphinxnotes.incrbuild')
-except metadata.PackageNotFoundError:
-    __VERSION__ = 'unknown'
 
 
 def main(argv=()) -> int:
@@ -38,7 +32,7 @@ def main(argv=()) -> int:
         argv = sys.argv[1:]
     args, build_args = _parse_args(list(argv))
 
-    info(f'Running sphinx-incrbuild {__VERSION__}, cache directory: {args.cache}')
+    info(f'Running sphinx-incrbuild {meta.__version__}, cache directory: {args.cache}')
 
     if args.builder not in ['html']:
         warn('Only HTML builder is supported, passthrough')
@@ -105,19 +99,19 @@ def _inject_parser(parser: argparse.ArgumentParser):
     for action in parser._actions:
         if hasattr(action, 'version'):
             # Fix the version
-            action.version = f'%(prog)s {__VERSION__}'
+            action.version = f'%(prog)s {meta.__version__}'
             version_hooked = True
             break
     if not version_hooked:
         parser.add_argument(
-            '--version', action='version', version=f'%(prog)s {__VERSION__}'
+            '--version', action='version', version=f'%(prog)s {meta.__version__}'
         )
 
     group = parser.add_argument_group('incrbuild options')
     group.add_argument(
         '--cache',
         type=str,
-        default='/tmp/sphinx-incrbuild',
+        default='/tmp/' + parser.prog,
         help='path to directory that will be cached by CI/CD',
     )
 
