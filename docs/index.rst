@@ -55,8 +55,8 @@ First, downloading extension from PyPI:
 
 .. ADDITIONAL CONTENT START
 
-After installation, command ``sphin-incrbuild`` should be available.
-Use need to replace their ``sphinx-build`` command to ``sphin-incrbuild``.
+After installation, command ``sphinxnotes-incrbuild`` should be available.
+User need to replace their ``sphinx-build`` command to ``sphinxnotes-incrbuild``.
 
 All arguments of ``sphin-incrbuild`` are same to :parsed_literal:`sphinx-build_`
 except:
@@ -64,14 +64,27 @@ except:
 :``--cache CACHE``: path to directory that will be cached by CI/CD
 
 Use should use CI/CD's Cache mechanism, restore cache file to cache directory
-pass the directory to ``sphin-incrbuild`` via ``--cache``, and upload the cache
-after build finished, in pseudocode:
+pass the directory to ``sphinxnotes-incrbuild`` via ``--cache``, and save
+the cache after build finished, in pseudocode:
 
 .. code-block:: yaml
 
-   - run: restore /tmp/cache
-   - run: sphinx-incrbuild --cache /tmp/cache <other Sphinx options...>
-   - run: upload /tmp/cache
+   - restore_cache:
+     key: /tmp/sphinxnotes-incrbuild
+   - run: sphinx-incrbuild <SOURCEDIR> <OUTPUTDIR>
+   - save_cache:
+     key: /tmp/sphinxnotes-incrbuild
+
+Users who use ``make html`` to build documentation should passing the override
+the ``SPHINXBUILD``:
+
+.. code-block:: yaml
+
+   - restore_cache:
+     key: /tmp/sphinxnotes-incrbuild
+   - run: make html SPHINXBUILD="python -msphinxnotes.incrbuild"
+   - save_cache:
+     key: /tmp/sphinxnotes-incrbuild
 
 GitHub Actions
 --------------

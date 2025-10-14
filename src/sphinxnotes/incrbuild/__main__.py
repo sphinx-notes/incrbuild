@@ -93,7 +93,7 @@ def _parse_args(argv):
 def _inject_parser(parser: argparse.ArgumentParser):
     parser.description = None
     parser.epilog = None
-    parser.prog = 'sphinx-incrbuild'
+    parser.prog = meta.__project__
 
     version_hooked = False
     for action in parser._actions:
@@ -111,7 +111,7 @@ def _inject_parser(parser: argparse.ArgumentParser):
     group.add_argument(
         '--cache',
         type=str,
-        default='/tmp/' + parser.prog,
+        default='/tmp/' + meta.__project__,
         help='path to directory that will be cached by CI/CD',
     )
 
