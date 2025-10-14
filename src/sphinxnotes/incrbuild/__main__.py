@@ -32,7 +32,9 @@ def main(argv=()) -> int:
         argv = sys.argv[1:]
     args, build_args = _parse_args(list(argv))
 
-    info(f'Running sphinx-incrbuild {meta.__version__}, cache directory: {args.cache}')
+    info(
+        f'Running {meta.__project__} {meta.__version__}, cache directory: {args.cache}'
+    )
 
     if args.builder not in ['html']:
         warn('Only HTML builder is supported, passthrough')
@@ -107,12 +109,13 @@ def _inject_parser(parser: argparse.ArgumentParser):
             '--version', action='version', version=f'%(prog)s {meta.__version__}'
         )
 
+    cache_dir = os.path.join('/tmp', meta.__project__)
     group = parser.add_argument_group('incrbuild options')
     group.add_argument(
         '--cache',
         type=str,
-        default='/tmp/' + meta.__project__,
-        help='path to directory that will be cached by CI/CD',
+        default=cache_dir,
+        help=f'path to directory that will be cached by CI/CD (default: {cache_dir})',
     )
 
     return parser

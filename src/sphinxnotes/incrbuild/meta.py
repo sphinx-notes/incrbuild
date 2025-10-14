@@ -16,5 +16,3 @@ try:
     __version__ = metadata.version('sphinxnotes-incrbuild')
 except metadata.PackageNotFoundError:
     __version__ = 'unknown'
-
-

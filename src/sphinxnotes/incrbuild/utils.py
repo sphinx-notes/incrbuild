@@ -17,16 +17,18 @@ import shutil
 from colorama import Fore, Style
 from pypi_simple import PyPISimple
 
+from . import meta
 
-def info(text, context='sphinx-incrbuild'):
+
+def info(text, context=meta.__project__):
     print(f'{Fore.GREEN}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 
-def warn(text, context='sphinx-incrbuild'):
+def warn(text, context=meta.__project__):
     print(f'{Fore.YELLOW}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 
-def error(text, context='sphinx-incrbuild'):
+def error(text, context=meta.__project__):
     print(f'{Fore.RED}[{context}]{Style.RESET_ALL} {text}', file=sys.stderr)
 
 

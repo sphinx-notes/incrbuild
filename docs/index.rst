@@ -71,7 +71,7 @@ the cache after build finished, in pseudocode:
 
    - restore_cache:
      key: /tmp/sphinxnotes-incrbuild
-   - run: sphinx-incrbuild <SOURCEDIR> <OUTPUTDIR>
+   - run: sphinxnotes-incrbuild <SOURCEDIR> <OUTPUTDIR>
    - save_cache:
      key: /tmp/sphinxnotes-incrbuild
 
