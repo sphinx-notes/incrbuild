@@ -47,7 +47,7 @@ def main(argv=()) -> int:
         doctrees_dir = args.doctreedir or args.outdir.joinpath('doctrees')
     else:
         html_dir = args.outdir
-        doctrees_dir = args.doctreedir or args.outdir.joinpath('.doctrees')
+        doctrees_dir = None # doctree_dir is contained in html_dir
 
     restore_cache(cache_dir, html_dir, doctrees_dir)
 
@@ -185,31 +185,35 @@ def restore_git_files_mtime(git_dir: Path):
         sys.exit(p.returncode)
 
 
-def restore_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path):
+def restore_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path | None):
     info(f'Restoring cache from {cache_dir}...')
 
     if not cache_dir.exists():
         warn(f"Cache directory {cache_dir} doesn't exist")
         return
+
     shutil.rmtree(html_dir, ignore_errors=True)
-    shutil.rmtree(doctree_dir, ignore_errors=True)
-
-    # Move may be faster than copy.
     move(cache_dir.joinpath('html'), html_dir)
-    move(cache_dir.joinpath('doctrees'), doctree_dir)
+
+    if doctree_dir:
+        shutil.rmtree(doctree_dir, ignore_errors=True)
+        move(cache_dir.joinpath('doctrees'), doctree_dir)
 
 
-def save_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path):
+
+def save_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path | None):
     info(f'Saving cache to {cache_dir}...')
 
     # Clear cache dir.
     shutil.rmtree(cache_dir, ignore_errors=True)
     cache_dir.mkdir()
 
-    # Move may be faster than copy.
     # NOTE: Copy html_dir here, it is also used as artifacts.
     copy(html_dir, cache_dir.joinpath('html'))
-    move(doctree_dir, cache_dir.joinpath('doctrees'))
+
+    if doctree_dir:
+        # Move may be faster than copy.
+        move(doctree_dir, cache_dir.joinpath('doctrees'))
 
 
 if __name__ == '__main__':
