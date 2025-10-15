@@ -58,7 +58,7 @@ First, downloading extension from PyPI:
 After installation, command ``sphinxnotes-incrbuild`` should be available.
 User need to replace their ``sphinx-build`` command to ``sphinxnotes-incrbuild``.
 
-All arguments of ``sphin-incrbuild`` are same to :parsed_literal:`sphinx-build_`
+All arguments of ``sphinx-incrbuild`` are same to :parsed_literal:`sphinx-build_`
 except:
 
 :``--cache CACHE``: path to directory that will be cached by CI/CD
