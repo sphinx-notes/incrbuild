@@ -18,3 +18,11 @@ Change Log
       :date: yyyy-mm-dd
 
    Change log here.
+
+Version 1.x
+===========
+
+.. version:: 1.0
+   :date: 2025-10-15
+
+   The first stable version is out, enjoy~
