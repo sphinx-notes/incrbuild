@@ -138,7 +138,7 @@ def restore_theme_files_mtime(theme: str):
 
     # Find all HTML files of theme and its dependencies.
     # For example: sphinx_book_theme depends on pydata-sphinx-theme.
-    deps = [theme]
+    deps = [theme, 'sphinx']
     for dep in metadata.requires(theme) or []:
         req = Requirement(dep)
         if req.marker is not None:
