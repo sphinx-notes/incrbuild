@@ -15,7 +15,7 @@ sphinxnotes-incrbuild
    :target: https://pypi.python.org/pypi/sphinxnotes-incrbuild
    :alt: PyPI Package
 .. |download| image:: https://img.shields.io/pypi/dm/sphinxnotes-incrbuild
-   :target: https://pypi.python.org/pypi/sphinxnotes-incrbuild
+   :target: https://pypistats.org/packages/sphinxnotes-incrbuild
    :alt: PyPI Package Downloads
 
 |docs| |license| |pypi| |download|
