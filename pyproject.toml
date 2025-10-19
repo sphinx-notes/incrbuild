@@ -7,7 +7,7 @@
 
 [project]
 name = "sphinxnotes-incrbuild"
-description = "Make sure incremental build available in CI/CD environment"
+description = "Enabling Sphinx incremental builds in CI/CD environment"
 readme = "README.rst"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]

@@ -20,7 +20,7 @@ sphinxnotes-incrbuild
 
 |docs| |license| |pypi| |download|
 
-Make sure incremental build available in CI/CD environment.
+Enabling Sphinx incremental builds in CI/CD environment.
 
 .. INTRODUCTION START 
    (MUST written in standard reStructuredText, without Sphinx stuff)

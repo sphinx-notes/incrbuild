@@ -8,7 +8,7 @@
       "name": "incrbuild",
       "full_name": "sphinxnotes-incrbuild",
       "author": "Shengyu Zhang",
-      "description": "Make sure incremental build available in CI/CD environment",
+      "description": "Enabling Sphinx incremental builds in CI/CD environment",
       "version": "1.0",
       "github_owner": "sphinx-notes",
       "github_repo": "incrbuild",
