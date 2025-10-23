@@ -11,7 +11,6 @@ Sphinx-related code.
 import argparse
 from pathlib import Path
 
-
 # NOTE: There aren't public APIs, but there aren't many better options
 from sphinx.config import eval_config_file
 from sphinx.cmd.build import get_parser, main

@@ -47,7 +47,7 @@ def main(argv=()) -> int:
         doctrees_dir = args.doctreedir or args.outdir.joinpath('doctrees')
     else:
         html_dir = args.outdir
-        doctrees_dir = None # doctree_dir is contained in html_dir
+        doctrees_dir = None  # doctree_dir is contained in html_dir
 
     restore_cache(cache_dir, html_dir, doctrees_dir)
 
@@ -198,7 +198,6 @@ def restore_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path | None):
     if doctree_dir:
         shutil.rmtree(doctree_dir, ignore_errors=True)
         move(cache_dir.joinpath('doctrees'), doctree_dir)
-
 
 
 def save_cache(cache_dir: Path, html_dir: Path, doctree_dir: Path | None):
