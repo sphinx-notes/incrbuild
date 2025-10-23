@@ -22,6 +22,11 @@ Change Log
 Version 1.x
 ===========
 
+.. version:: 1.1
+   :date: 2025-10-23
+
+   - fix: Passing a valid Tags object to ``eval_config_file`` (:issue:`2`)
+
 .. version:: 1.0
    :date: 2025-10-15
 
