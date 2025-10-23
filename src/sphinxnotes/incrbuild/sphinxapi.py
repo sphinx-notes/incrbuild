@@ -15,7 +15,7 @@ from pathlib import Path
 from sphinx.config import eval_config_file
 from sphinx.errors import ConfigError
 from sphinx.cmd.build import get_parser, main
-
+from sphinx.util.tags import Tags
 
 from .utils import error
 
@@ -23,7 +23,7 @@ from .utils import error
 def get_html_theme(conf_dir: Path) -> str:
     DEFAULT_HTML_THEME = 'alabaster'
     try:
-        cfg = eval_config_file(conf_dir.joinpath('conf.py'), None)
+        cfg = eval_config_file(conf_dir.joinpath('conf.py'), Tags())
     except ConfigError as e:
         error(f'Failed to get html theme from config file {conf_dir}: {e}')
         return DEFAULT_HTML_THEME
