@@ -1,0 +1,18 @@
+image: python:3.12
+
+stages:
+  - docs
+
+cache:
+  key: sphinxnotes-incrbuild
+  paths:
+    - /tmp/sphinxnotes-incrbuild
+
+pages:
+  stage: docs
+  script:
+    - pip install sphinxnotes-incrbuild
+    - sphinxnotes-incrbuild docs public
+  artifacts:
+    paths:
+      - public
