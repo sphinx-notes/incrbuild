@@ -104,7 +104,29 @@ __ https://github.com/marketplace/actions/sphinx-to-github-pages
 GitLab CI
 ---------
 
-TODO
+``sphinxnotes-incrbuild`` can be used in GitLab CI with the cache mechanism:
+
+.. code-block:: yaml
+   :emphasize-lines: 4-5,10
+
+   image: python:3.12
+
+   stages:
+     - docs
+
+   cache:
+     key: sphinxnotes-incrbuild
+     paths:
+       - /tmp/sphinxnotes-incrbuild
+
+   pages:
+     stage: docs
+     script:
+       - pip install sphinxnotes-incrbuild
+       - sphinxnotes-incrbuild docs public
+     artifacts:
+       paths:
+         - public
 
 Contents
 ========
